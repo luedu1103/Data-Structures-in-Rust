@@ -14,10 +14,10 @@ fn main() {
     map.insert("(".to_string(), 0);
     map.insert(")".to_string(), 0);
 
-    let string: String = String::from("4*(5+6-(8/2^3)-7)-1");
+    // let string: String = String::from("4*(5+6-(8/2^3)-7)-1");
     // let string: String = String::from("29-9*2^10");
     // let string: String = String::from("29^9*2-10");
-    // let string: String = String::from("10+5.2-200");
+    let string: String = String::from("10+5.2-200");
     // let string: String = String::from("3*11+2004+1+2000+3");
 
     let postfija_mostrar = postfija_and_popall::postfija(&string, &map);

@@ -39,7 +39,7 @@ pub mod postfija_and_popall{
 
     pub fn postfija_rules(map: &HashMap<String, u32> ,pila: &mut Vec<String>, i: &char, mut operation_string: String, postfija_mostrar: &mut Vec<String>){
         // Si la pila esta vacia, se le coloca el operador
-        if pila.is_empty() {
+        if pila.is_empty(){
             pila.push(i.to_string());
             postfija_mostrar.push("".to_string());
             return;
@@ -76,7 +76,7 @@ pub mod postfija_and_popall{
 
     pub fn pop_everything(pila: &mut Vec<String>, postfija_mostrar: &mut Vec<String>){
         let valor = pila.pop().unwrap_or("".to_string());
-        if valor == "(".to_string() {
+        if valor == "(".to_string() || valor == ")".to_string(){
             return;
         }
         postfija_mostrar.push(valor);

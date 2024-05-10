@@ -1,4 +1,4 @@
-use std::{cmp::Ordering, collections::HashMap};
+use std::{cmp::Ordering, vec};
 
 fn main() {
     println!("Hola!!!");
@@ -13,6 +13,8 @@ fn main() {
         año: 2004
      };
     println!("{:#?}", hoy.get_ano());
+    println!("{:#?}", hoy.get_dia());
+    println!("{:#?}", hoy.get_mes());
     println!("{:#?}", hoy.month_name());
     println!("{:#?}", hoy.compare_to(other_day));
 }
@@ -38,43 +40,16 @@ impl Fecha {
     }
 
     fn month_name(&self) -> String {
-        let mut meses: HashMap<u32, String> = HashMap::new();
-        meses.insert(1, "Enero".to_string());
-        meses.insert(2, "Febrero".to_string());
-        meses.insert(3, "Marzo".to_string());
-        meses.insert(4, "Abril".to_string());
-        meses.insert(5, "Mayo".to_string());
-        meses.insert(6, "Junio".to_string());
-        meses.insert(7, "Julio".to_string());
-        meses.insert(8, "Agosto".to_string());
-        meses.insert(9, "Septiembre".to_string());
-        meses.insert(10, "Octubre".to_string());
-        meses.insert(11, "Noviembre".to_string());
-        meses.insert(12, "Diciembre".to_string());
+        let meses: Vec<String> = vec![
+            "Enero".to_string(), "Febrero".to_string(), "Marzo".to_string(), "Abril".to_string(), "Mayo".to_string(), "Junio".to_string(),
+            "Julio".to_string(), "Agosto".to_string(), "Septiembre".to_string(), "Octubre".to_string(), "Noviembre".to_string(), "Diciembre".to_string(), 
+        ];
 
-        meses.get(&self.mes).unwrap_or(&String::new()).to_string()
+        let string = &meses[self.mes as usize - 1 as usize];
+        string.to_string()
     }
 
     fn compare_to(&self ,other_day: Fecha) -> Option<Ordering>{
-        // if self.año < other_day.año {
-        //     -1
-        // }
-        // else if self.año == other_day.año {
-        //     if self.mes == other_day.mes {
-        //         if self.dia == other_day.dia {return 0;}
-        //         else if self.dia < other_day.dia {return -1;}
-        //         else {return 1;}
-        //     }
-        //     else if self.mes < other_day.mes {
-        //         return -1;
-        //     }
-        //     else {
-        //         return 1
-        //     }
-        // }
-        // else {
-        //     1
-        // }
         match self.año.cmp(&other_day.año) {
             Ordering::Less => Some(Ordering::Less),
             Ordering::Greater => Some(Ordering::Greater),

@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{cmp::Ordering, collections::{BinaryHeap, HashMap}};
 
 struct Graph {
     nodes: Vec<String>,
@@ -29,50 +29,49 @@ impl Graph {
         }
     }
 
-    fn dijsktra(&mut self, start: usize) -> Vec<(usize, usize)>{
-        let mut visited = vec![false; self.nodes.len()];
-        let mut dijsktra_list = Vec::new();
-
-        // Llenamos la lista de los nodos con distancia 1000
-        for i in 0..self.nodes.len() {
-            if i == 0 {
-                dijsktra_list.push((i, 0));
+    fn dijkstra(&self, start: usize) -> Vec<(usize, usize)> {
+        let mut distances = vec![usize::MAX; self.nodes.len()];
+        let mut heap = BinaryHeap::new();
+        
+        distances[start] = 0;
+        heap.push(State { node: start, cost: 0 });
+        
+        while let Some(State { node, cost }) = heap.pop() {
+            if cost > distances[node] {
+                continue;
             }
-            else {
-                dijsktra_list.push((i, 10000));
+            
+            if let Some(neighbors) = self.edges.get(&node) {
+                for &(neighbor, weight) in neighbors {
+                    let next = State { node: neighbor, cost: cost + weight };
+                    
+                    if next.cost < distances[neighbor] {
+                        heap.push(next);
+                        distances[neighbor] = next.cost;
+                    }
+                }
             }
         }
-
-        self.dijsktra_util(&mut dijsktra_list, start, &mut visited);
-
-        dijsktra_list
+        
+        distances.into_iter().enumerate().collect()
     }
+}
 
-    fn dijsktra_util(&self, dijsktra_list: &mut Vec<(usize, usize)>, start: usize, visited: &mut Vec<bool>) {
-        visited[start] = true;
-        if let Some(edges) = self.edges.get(&start){
-            // println!("Edges: {:?}", edges);
-            let mut min= (0, 1000);
-            for node in edges {
-                let current_node = dijsktra_list[node.0];
+#[derive(Copy, Clone, Eq, PartialEq)]
+struct State {
+    cost: usize,
+    node: usize,
+}
 
-                // Obtenemos la tentativa menor
-                if min.1 > node.1 {
-                    min = *node;
-                }
+impl Ord for State {
+    fn cmp(&self, other: &Self) -> Ordering {
+        other.cost.cmp(&self.cost)
+    }
+}
 
-                // Cambiamos el minimo de la lista
-                let suma = dijsktra_list[start].1 + node.1;
-                if suma < current_node.1 {
-                    dijsktra_list[node.0].1 = suma;
-                }
-            }
-            println!("{:?}", dijsktra_list);
-
-            if !visited[min.0] {
-                self.dijsktra_util(dijsktra_list, min.0, visited);
-            }
-        }
+impl PartialOrd for State {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
     }
 }
 
@@ -96,7 +95,7 @@ fn main() {
     graph.add_edge(c, e, 5);
     graph.add_edge(d, e, 1);
 
-    let list = graph.dijsktra(0);
+    let list = graph.dijkstra(0);
 
     println!("{:?}", list);
 }
@@ -118,7 +117,75 @@ fn simple_graph() {
     graph.add_edge(b, d, 5);
     graph.add_edge(c, d, 1);
 
-    let list = graph.dijsktra(0);
+    let list = graph.dijkstra(0);
+
+    println!("{:?}", list);
+}
+
+#[test]
+fn large_graph(){
+    let mut graph = Graph::new();
+
+    // Add nodes
+    let a = graph.add_node("A");
+    let b = graph.add_node("B");
+    let c = graph.add_node("C");
+    let d = graph.add_node("D");
+    let e = graph.add_node("E");
+    let f = graph.add_node("G");
+    let g = graph.add_node("G");
+    let h = graph.add_node("H");
+    let i = graph.add_node("I");
+    let j = graph.add_node("J");
+    let k = graph.add_node("K");
+    let l = graph.add_node("L");
+    let m = graph.add_node("M");
+    let n = graph.add_node("N");
+    let p = graph.add_node("P");
+
+    graph.add_edge(a, b, 8);
+    graph.add_edge(a, d, 5);
+    graph.add_edge(a, e, 4);
+
+    graph.add_edge(b, c, 3);
+    graph.add_edge(b, f, 4);
+    graph.add_edge(b, e, 12);
+
+    graph.add_edge(c, g, 11);
+    graph.add_edge(c, f, 9);
+
+    graph.add_edge(d, e, 9);
+    graph.add_edge(d, h, 6);
+
+    graph.add_edge(e, f, 3);
+    graph.add_edge(e, j, 5);
+    graph.add_edge(e, i, 8);
+
+    graph.add_edge(f, g, 1);
+    graph.add_edge(f, k, 8);
+
+    graph.add_edge(g, l, 7);
+    graph.add_edge(g, k, 8);
+
+    graph.add_edge(h, i, 2);
+    graph.add_edge(h, m, 7);
+
+    graph.add_edge(i, j, 10);
+    graph.add_edge(i, m, 6);
+    
+    graph.add_edge(j, k, 6);
+    graph.add_edge(j, n, 9);
+
+    graph.add_edge(k, l, 5);
+    graph.add_edge(k, p, 7);
+    
+    graph.add_edge(l, p, 6);
+    
+    graph.add_edge(m, n, 2);
+
+    graph.add_edge(n, p, 12);
+
+    let list = graph.dijkstra(0);
 
     println!("{:?}", list);
 }

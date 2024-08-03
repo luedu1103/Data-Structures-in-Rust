@@ -59,7 +59,7 @@ fn main(){
     lista.push(12);
     lista.push(2);
     let numero = lista.pop();
-    println!("{:#?}", lista);
+    // println!("{:#?}", lista);
     println!("{}", numero.unwrap_or_default())
 }
 
